@@ -19,9 +19,15 @@ from typing import Optional
 from notion_client import Client as NotionClient
 import google.generativeai as genai
 
-NOTION_API_KEY      = os.environ.get("NOTION_API_KEY", "").strip()
-NOTION_DB_ID        = os.environ.get("NOTION_DB_ID", "").strip().split("?")[0]
-GEMINI_API_KEY      = os.environ.get("GEMINI_API_KEY", "").strip()
+import re
+
+NOTION_API_KEY = os.environ.get("NOTION_API_KEY", "").strip()
+_raw_db_id     = os.environ.get("NOTION_DB_ID", "").strip().split("?")[0].rstrip("/")
+_raw_db_id     = _raw_db_id.split("/")[-1]
+_match         = re.search(r"([a-fA-F0-9]{32})$", _raw_db_id.replace("-", ""))
+NOTION_DB_ID   = _match.group(1) if _match else _raw_db_id
+
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "").strip()
 APIFY_API_TOKEN     = os.environ.get("APIFY_API_TOKEN", "").strip()
 NAVER_CLIENT_ID     = os.environ.get("NAVER_CLIENT_ID", "").strip()
 NAVER_CLIENT_SECRET = os.environ.get("NAVER_CLIENT_SECRET", "").strip()
