@@ -450,9 +450,13 @@ class handler(BaseHTTPRequestHandler):
         addr_display = address or "주소 미확인"
         print(f"[ReelFork v7] ✅ {restaurant_name} ({category}) | {addr_display} | {elapsed}s")
 
+        msg = f"✅ {restaurant_name} 저장 완료!"
+        if "warning" in result:
+            msg += f"\n⚠️ {result['warning']}"
+
         self._json(200, {
             "success":         True,
-            "message":         f"✅ {restaurant_name} 저장 완료!",
+            "message":         msg,
             "restaurant_name": restaurant_name,
             "category":        category,
             "address":         addr_display,
