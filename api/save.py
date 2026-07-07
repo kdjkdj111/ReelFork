@@ -298,24 +298,32 @@ def get_stats() -> dict:
     cursor    = None
 
     try:
+        import requests
+        headers = {
+            "Authorization": f"Bearer {NOTION_API_KEY}",
+            "Notion-Version": "2022-06-28",
+            "Content-Type": "application/json"
+        }
         while True:
-            kwargs: dict = {"database_id": NOTION_DB_ID, "page_size": 100}
+            payload = {"page_size": 100}
             if cursor:
-                kwargs["start_cursor"] = cursor
-            result = notion.databases.query(**kwargs)
+                payload["start_cursor"] = cursor
+            
+            res = requests.post(
+                f"https://api.notion.com/v1/databases/{NOTION_DB_ID}/query",
+                headers=headers,
+                json=payload
+            )
+            res.raise_for_status()
+            result = res.json()
+            
             all_pages.extend(result.get("results", []))
             if not result.get("has_more"):
                 break
             cursor = result.get("next_cursor")
     except Exception as e:
         import traceback
-        import requests
-        headers = {
-            "Authorization": f"Bearer {NOTION_API_KEY}",
-            "Notion-Version": "2022-06-28"
-        }
-        test_res = requests.get(f"https://api.notion.com/v1/databases/{NOTION_DB_ID}", headers=headers).json()
-        return {"error": str(e), "traceback": traceback.format_exc(), "debug_db_id": NOTION_DB_ID, "test_res": test_res}
+        return {"error": f"{str(e)} | Response: {res.text if 'res' in locals() else ''}", "traceback": traceback.format_exc(), "debug_db_id": NOTION_DB_ID}
 
     total          = len(all_pages)
     visited        = 0
