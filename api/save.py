@@ -308,7 +308,8 @@ def get_stats() -> dict:
                 break
             cursor = result.get("next_cursor")
     except Exception as e:
-        return {"error": str(e), "debug_db_id": NOTION_DB_ID}
+        import traceback
+        return {"error": str(e), "traceback": traceback.format_exc(), "debug_db_id": NOTION_DB_ID}
 
     total          = len(all_pages)
     visited        = 0
