@@ -256,7 +256,7 @@ def save_to_notion(
             create_kwargs["cover"] = cover
 
         page = notion.pages.create(**create_kwargs)
-        return {"notion_page_id": page["id"]}
+        return {"notion_page_id": page["id"], "page_obj": page}
     except Exception as e:
         error_msg = str(e)
         if "is not a property that exists" in error_msg or "Cannot find property" in error_msg:
@@ -274,7 +274,7 @@ def save_to_notion(
                     parent={"database_id": NOTION_DB_ID},
                     properties=properties,
                 )
-                return {"notion_page_id": page["id"], "warning": f"일부 속성이 누락되어 제외됨: {error_msg}"}
+                return {"notion_page_id": page["id"], "page_obj": page, "warning": f"일부 속성이 누락되어 제외됨: {error_msg}"}
             except Exception as e2:
                 return {"error": f"Notion API 재시도 오류: {str(e2)}"}
         return {"error": f"Notion API 오류: {error_msg}"}
@@ -463,4 +463,5 @@ class handler(BaseHTTPRequestHandler):
             "naver_link":      naver_link or "",
             "registered_by":   nickname,
             "elapsed_s":       elapsed,
+            "debug_notion_category": result.get("page_obj", {}).get("properties", {}).get("카테고리")
         })
