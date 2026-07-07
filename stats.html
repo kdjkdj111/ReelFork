@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🐷 ReelFork — 통계</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:      #fdf4f5;
+      --card:    rgba(255,255,255,0.92);
+      --border:  rgba(220,100,120,0.13);
+      --accent1: #d95f7b;
+      --accent2: #f0a0b2;
+      --text:    #2d1a1e;
+      --muted:   #9b7880;
+    }
+    body {
+      font-family: 'Pretendard', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 2rem 1rem 4rem;
+      background-image: radial-gradient(ellipse 70% 40% at 50% 0%, rgba(217,95,123,0.09) 0%, transparent 65%);
+    }
+    .top {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .top a {
+      display: inline-block;
+      color: var(--muted);
+      font-size: .8rem;
+      font-weight: 600;
+      text-decoration: none;
+      margin-bottom: 1rem;
+      opacity: .7;
+      transition: opacity .15s;
+    }
+    .top a:hover { opacity: 1; }
+    .top h1 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--accent1), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .top p { color: var(--muted); font-size: .85rem; margin-top: .3rem; }
+
+    .grid {
+      max-width: 480px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    /* 카드 */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 1.4rem;
+      padding: 1.4rem 1.6rem;
+      box-shadow: 0 4px 20px rgba(180,60,90,0.06);
+    }
+    .card-title {
+      font-size: .75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: var(--muted);
+      margin-bottom: 1rem;
+    }
+
+    /* 숫자 요약 카드 */
+    .summary {
+      display: flex;
+      gap: 0;
+    }
+    .stat-box {
+      flex: 1;
+      text-align: center;
+      padding: .5rem 0;
+    }
+    .stat-box + .stat-box {
+      border-left: 1px solid var(--border);
+    }
+    .stat-num {
+      font-size: 2rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--accent1), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1.1;
+    }
+    .stat-label {
+      font-size: .72rem;
+      color: var(--muted);
+      font-weight: 600;
+      margin-top: .25rem;
+    }
+
+    /* 방문률 바 */
+    .visit-bar-wrap {
+      background: rgba(217,95,123,0.1);
+      border-radius: 999px;
+      height: 10px;
+      margin-top: .9rem;
+      overflow: hidden;
+    }
+    .visit-bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--accent1), var(--accent2));
+      transition: width .6s ease;
+    }
+    .visit-label {
+      font-size: .78rem;
+      color: var(--muted);
+      font-weight: 600;
+      margin-top: .5rem;
+      text-align: right;
+    }
+
+    /* 바 차트 공통 */
+    .bar-row {
+      display: flex;
+      align-items: center;
+      gap: .7rem;
+      margin-bottom: .6rem;
+    }
+    .bar-row:last-child { margin-bottom: 0; }
+    .bar-label {
+      font-size: .82rem;
+      font-weight: 700;
+      min-width: 52px;
+      color: var(--text);
+    }
+    .bar-track {
+      flex: 1;
+      background: rgba(217,95,123,0.1);
+      border-radius: 999px;
+      height: 8px;
+      overflow: hidden;
+    }
+    .bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--accent1), var(--accent2));
+      transition: width .5s ease;
+    }
+    .bar-count {
+      font-size: .78rem;
+      font-weight: 700;
+      color: var(--accent1);
+      min-width: 22px;
+      text-align: right;
+    }
+
+    /* 리더보드 */
+    .leader-row {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      padding: .5rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .leader-row:last-child { border-bottom: none; padding-bottom: 0; }
+    .leader-rank {
+      font-size: .85rem;
+      font-weight: 800;
+      color: var(--accent1);
+      min-width: 1.4rem;
+      text-align: center;
+    }
+    .leader-name {
+      flex: 1;
+      font-size: .9rem;
+      font-weight: 700;
+    }
+    .leader-count {
+      font-size: .85rem;
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    /* 로딩 */
+    .loading {
+      text-align: center;
+      color: var(--muted);
+      font-size: .9rem;
+      font-weight: 600;
+      padding: 3rem 0;
+      animation: pulse 1.5s ease infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:.5} 50%{opacity:1} }
+
+    .error-msg {
+      text-align: center;
+      color: var(--accent1);
+      font-size: .88rem;
+      font-weight: 600;
+      padding: 2rem 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="top">
+    <a href="/">← 홈으로</a>
+    <h1>🐷 맛집 통계</h1>
+    <p id="updated-at"></p>
+  </div>
+
+  <div class="grid" id="content">
+    <div class="loading">불러오는 중...</div>
+  </div>
+
+  <script>
+    const MEDAL = ["🥇","🥈","🥉"];
+
+    async function load() {
+      const container = document.getElementById("content");
+      try {
+        const res  = await fetch("/api/stats");
+        const data = await res.json();
+
+        if (data.error) {
+          container.innerHTML = `<div class="error-msg">⚠️ ${data.error}</div>`;
+          return;
+        }
+
+        document.getElementById("updated-at").textContent =
+          "업데이트: " + new Date().toLocaleString("ko-KR", {month:"numeric",day:"numeric",hour:"2-digit",minute:"2-digit"});
+
+        const visitPct = data.total > 0 ? Math.round(data.visited / data.total * 100) : 0;
+        const maxRegion = Math.max(...Object.values(data.by_region), 1);
+        const maxCat    = Math.max(...Object.values(data.by_category), 1);
+        const maxReg    = Math.max(...Object.values(data.by_registrar), 1);
+
+        container.innerHTML = `
+          <!-- 요약 -->
+          <div class="card">
+            <div class="summary">
+              <div class="stat-box">
+                <div class="stat-num">${data.total}</div>
+                <div class="stat-label">총 저장</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-num">${data.visited}</div>
+                <div class="stat-label">방문 완료</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-num">${data.unvisited}</div>
+                <div class="stat-label">미방문</div>
+              </div>
+            </div>
+            <div class="visit-bar-wrap">
+              <div class="visit-bar-fill" style="width:${visitPct}%"></div>
+            </div>
+            <div class="visit-label">방문률 ${visitPct}%</div>
+          </div>
+
+          <!-- 등록자 순위 -->
+          ${Object.keys(data.by_registrar).length ? `
+          <div class="card">
+            <div class="card-title">🏆 많이 올린 사람</div>
+            ${Object.entries(data.by_registrar).slice(0,5).map(([name, cnt], i) => `
+              <div class="leader-row">
+                <div class="leader-rank">${MEDAL[i] || i+1}</div>
+                <div class="leader-name">${name}</div>
+                <div class="leader-count">${cnt}개</div>
+              </div>
+            `).join("")}
+          </div>` : ""}
+
+          <!-- 지역 분포 -->
+          ${Object.keys(data.by_region).length ? `
+          <div class="card">
+            <div class="card-title">📍 지역별</div>
+            ${Object.entries(data.by_region).slice(0,8).map(([name, cnt]) => `
+              <div class="bar-row">
+                <div class="bar-label">${name}</div>
+                <div class="bar-track">
+                  <div class="bar-fill" style="width:${Math.round(cnt/maxRegion*100)}%"></div>
+                </div>
+                <div class="bar-count">${cnt}</div>
+              </div>
+            `).join("")}
+          </div>` : ""}
+
+          <!-- 카테고리 분포 -->
+          ${Object.keys(data.by_category).length ? `
+          <div class="card">
+            <div class="card-title">🍽️ 카테고리별</div>
+            ${Object.entries(data.by_category).map(([name, cnt]) => `
+              <div class="bar-row">
+                <div class="bar-label">${name}</div>
+                <div class="bar-track">
+                  <div class="bar-fill" style="width:${Math.round(cnt/maxCat*100)}%"></div>
+                </div>
+                <div class="bar-count">${cnt}</div>
+              </div>
+            `).join("")}
+          </div>` : ""}
+        `;
+      } catch(e) {
+        container.innerHTML = `<div class="error-msg">⚠️ 데이터를 불러오지 못했어요.<br>${e.message}</div>`;
+      }
+    }
+
+    load();
+  </script>
+</body>
+</html>
