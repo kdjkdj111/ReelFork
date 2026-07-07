@@ -20,7 +20,7 @@ from notion_client import Client as NotionClient
 import google.generativeai as genai
 
 NOTION_API_KEY      = os.environ.get("NOTION_API_KEY", "").strip()
-NOTION_DB_ID        = os.environ.get("NOTION_DB_ID", "").strip()
+NOTION_DB_ID        = os.environ.get("NOTION_DB_ID", "").strip().split("?")[0]
 GEMINI_API_KEY      = os.environ.get("GEMINI_API_KEY", "").strip()
 APIFY_API_TOKEN     = os.environ.get("APIFY_API_TOKEN", "").strip()
 NAVER_CLIENT_ID     = os.environ.get("NAVER_CLIENT_ID", "").strip()

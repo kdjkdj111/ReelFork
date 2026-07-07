@@ -6,6 +6,8 @@
   },
   "routes": [
     { "src": "/api/save", "dest": "/api/save.py" },
+    { "src": "/api/stats", "dest": "/api/save.py" },
+    { "src": "/stats", "dest": "/api/save.py" },
     { "src": "/(.*)", "dest": "/index.html" }
   ]
 }
