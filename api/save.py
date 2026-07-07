@@ -309,7 +309,13 @@ def get_stats() -> dict:
             cursor = result.get("next_cursor")
     except Exception as e:
         import traceback
-        return {"error": str(e), "traceback": traceback.format_exc(), "debug_db_id": NOTION_DB_ID}
+        import requests
+        headers = {
+            "Authorization": f"Bearer {NOTION_API_KEY}",
+            "Notion-Version": "2022-06-28"
+        }
+        test_res = requests.get(f"https://api.notion.com/v1/databases/{NOTION_DB_ID}", headers=headers).json()
+        return {"error": str(e), "traceback": traceback.format_exc(), "debug_db_id": NOTION_DB_ID, "test_res": test_res}
 
     total          = len(all_pages)
     visited        = 0
