@@ -100,8 +100,11 @@ def extract_restaurant_info(caption: str) -> tuple[bool, str, str, str]:
     for model_name in models_to_try:
         try:
             model = genai.GenerativeModel(model_name)
-            resp  = model.generate_content(prompt)
-            clean = resp.text.replace("```json", "").replace("```", "").strip()
+            resp  = model.generate_content(
+                prompt,
+                generation_config=genai.GenerationConfig(response_mime_type="application/json")
+            )
+            clean = resp.text.strip()
             data  = json.loads(clean)
 
             name     = data.get("restaurant_name")
@@ -256,9 +259,16 @@ def save_to_notion(
         return {"notion_page_id": page["id"]}
     except Exception as e:
         error_msg = str(e)
-        if "is not a property that exists" in error_msg:
-            for key in ["가게 인스타", "지역", "카테고리"]:
-                properties.pop(key, None)
+        if "is not a property that exists" in error_msg or "Cannot find property" in error_msg:
+            popped_any = False
+            for key in list(properties.keys()):
+                if key in error_msg:
+                    properties.pop(key, None)
+                    popped_any = True
+            
+            if not popped_any:
+                for key in ["가게 인스타", "지역", "카테고리", "방문", "주소"]:
+                    properties.pop(key, None)
             try:
                 page = notion.pages.create(
                     parent={"database_id": NOTION_DB_ID},
@@ -266,7 +276,7 @@ def save_to_notion(
                 )
                 return {"notion_page_id": page["id"]}
             except Exception as e2:
-                return {"error": f"Notion API 오류: {str(e2)}"}
+                return {"error": f"Notion API 재시도 오류: {str(e2)}"}
         return {"error": f"Notion API 오류: {error_msg}"}
 
 
