@@ -95,7 +95,7 @@ def extract_restaurant_info(caption: str) -> tuple[bool, str, str, str]:
   "search_query": "네이버 지도 검색 쿼리 (이름+지역, 예: 홍대 몽카페)"
 }}"""
 
-    models_to_try = ["gemini-2.0-flash-lite", "gemini-1.5-flash-8b", "gemini-1.5-flash"]
+    models_to_try = ["gemini-3.1-flash-lite", "gemini-1.5-flash-8b", "gemini-1.5-flash"]
 
     for model_name in models_to_try:
         try:
