@@ -1,0 +1,11 @@
+{
+  "functions": {
+    "api/save.py": {
+      "maxDuration": 300
+    }
+  },
+  "routes": [
+    { "src": "/api/save", "dest": "/api/save.py" },
+    { "src": "/(.*)", "dest": "/index.html" }
+  ]
+}
