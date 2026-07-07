@@ -274,7 +274,7 @@ def save_to_notion(
                     parent={"database_id": NOTION_DB_ID},
                     properties=properties,
                 )
-                return {"notion_page_id": page["id"]}
+                return {"notion_page_id": page["id"], "warning": f"일부 속성이 누락되어 제외됨: {error_msg}"}
             except Exception as e2:
                 return {"error": f"Notion API 재시도 오류: {str(e2)}"}
         return {"error": f"Notion API 오류: {error_msg}"}
