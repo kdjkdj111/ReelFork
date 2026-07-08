@@ -269,6 +269,16 @@ def save_to_notion(
         }
         if cover:
             create_kwargs["cover"] = cover
+            create_kwargs["children"] = [
+                {
+                    "object": "block",
+                    "type": "image",
+                    "image": {
+                        "type": "external",
+                        "external": {"url": thumbnail_url}
+                    }
+                }
+            ]
 
         page = notion.pages.create(**create_kwargs)
         return {"notion_page_id": page["id"], "page_obj": page}
