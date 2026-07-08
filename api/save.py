@@ -88,14 +88,16 @@ def extract_restaurant_info(caption: str) -> tuple[bool, str, str, str]:
     """Returns (success, restaurant_name, search_query, category)"""
     genai.configure(api_key=GEMINI_API_KEY)
 
-    prompt = f"""다음은 인스타그램 맛집/카페 게시물 본문입니다.
+    prompt = f"""다음은 인스타그램 게시물 본문입니다.
 
 [본문]
 {caption[:2000]}
 
-이 본문에서 소개하는 식당 또는 카페의 정보를 추출하여, 아래 JSON 형식으로만 응답하세요 (다른 말 절대 금지):
+이 본문이 '음식점(식당)'이나 '카페'를 소개하는 글인지 먼저 판단하세요. 
+만약 옷가게, 소품샵, 팝업스토어, 전시회, 화장품, 개인 일상글 등 맛집/카페와 무관한 게시물이라면, 억지로 정보를 찾지 말고 "restaurant_name"에 반드시 null을 반환하세요.
+오직 맛집/카페일 경우에만 아래 JSON 형식으로 응답하세요:
 {{
-  "restaurant_name": "식당 또는 카페 이름 (없으면 null)",
+  "restaurant_name": "식당 또는 카페 이름 (맛집/카페가 아니면 null)",
   "category": "한식|카페|일식|중식|양식|술집|분식|기타 중 정확히 하나",
   "location_hint": "언급된 동네나 지역명 (없으면 빈 문자열)",
   "search_query": "네이버 지도 검색 쿼리 (이름+지역, 예: 홍대 몽카페)"
@@ -120,7 +122,7 @@ def extract_restaurant_info(caption: str) -> tuple[bool, str, str, str]:
             if not name or name == "null":
                 print(f"[Gemini] 본문: {caption[:300]}")
                 print(f"[Gemini] 결과: {clean}")
-                return False, "", f"식당 이름을 찾을 수 없습니다. (응답: {clean})", "기타"
+                return False, "", "맛집이나 카페를 소개하는 게시글이 아닙니다. 저장을 취소합니다.", "기타"
 
             return True, str(name), str(query), str(category)
         except Exception as e:
