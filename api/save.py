@@ -220,7 +220,11 @@ def save_to_notion(
         if parts:
             f = parts[0]
             region = f
-            if   f.startswith("서울"): region = "서울"
+            
+            # 도 단위(Province) 확인
+            is_province = any(f.startswith(p) for p in ["경기", "강원", "충북", "충청북", "충남", "충청남", "전북", "전라북", "전남", "전라남", "경북", "경상북", "경남", "경상남", "제주"])
+            
+            if f.startswith("서울"): region = "서울"
             elif f.startswith("부산"): region = "부산"
             elif f.startswith("대구"): region = "대구"
             elif f.startswith("인천"): region = "인천"
@@ -228,15 +232,18 @@ def save_to_notion(
             elif f.startswith("대전"): region = "대전"
             elif f.startswith("울산"): region = "울산"
             elif f.startswith("세종"): region = "세종"
-            elif f.startswith("경기"): region = "경기"
-            elif f.startswith("강원"): region = "강원"
-            elif f.startswith("충북") or f.startswith("충청북도"): region = "충북"
-            elif f.startswith("충남") or f.startswith("충청남도"): region = "충남"
-            elif f.startswith("전북") or f.startswith("전라북도") or f.startswith("전북특별자치도"): region = "전북"
-            elif f.startswith("전남") or f.startswith("전라남도"): region = "전남"
-            elif f.startswith("경북") or f.startswith("경상북도"): region = "경북"
-            elif f.startswith("경남") or f.startswith("경상남도"): region = "경남"
-            elif f.startswith("제주"): region = "제주"
+            elif is_province:
+                if len(parts) > 1:
+                    region = parts[1]
+                else:
+                    region = f[:2]
+            else:
+                region = f
+
+            # 시/군 제거 (예: 안동시 -> 안동, 칠곡군 -> 칠곡)
+            if region.endswith("시") or region.endswith("군"):
+                region = region[:-1]
+                
             properties["지역"] = {"select": {"name": region}}
 
     # 주소
