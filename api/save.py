@@ -98,7 +98,7 @@ def extract_restaurant_info(caption: str) -> tuple[bool, str, str, str]:
 오직 맛집/카페일 경우에만 아래 JSON 형식으로 응답하세요:
 {{
   "restaurant_name": "식당 또는 카페 이름 (맛집/카페가 아니면 null)",
-  "category": "한식|카페|일식|중식|양식|술집|분식|기타 중 정확히 하나",
+  "category": "한식|카페|일식|중식|양식|술집|분식|아시안|디저트|기타 중 정확히 하나",
   "location_hint": "언급된 동네나 지역명 (없으면 빈 문자열)",
   "search_query": "네이버 지도 검색 쿼리 (이름+지역, 예: 홍대 몽카페)"
 }}"""
