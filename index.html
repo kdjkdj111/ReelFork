@@ -186,6 +186,27 @@
       font-size: .75rem;
       font-weight: 600;
     }
+
+    .qr-container {
+      margin: 1.5rem 0;
+      padding: 1.5rem;
+      background: #f8fafc;
+      border-radius: 1rem;
+      border: 1px dashed var(--border);
+      text-align: center;
+    }
+    .qr-container img {
+      width: 130px;
+      height: 130px;
+      border-radius: 12px;
+      margin-bottom: 0.8rem;
+    }
+    .qr-container p {
+      margin: 0;
+      font-size: 0.9rem;
+      color: var(--text);
+      font-weight: 600;
+    }
   </style>
 </head>
 
@@ -211,8 +232,13 @@
       </div>
     </div>
 
+    <div class="qr-container">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://www.icloud.com/shortcuts/ff533f5ea8a14de7a4741dcae0fe8fb1" alt="단축어 다운로드 QR" />
+      <p>📱 아이폰 카메라로 QR을 스캔해서 추가하세요!</p>
+    </div>
+
     <a class="btn-dl" href="https://www.icloud.com/shortcuts/ff533f5ea8a14de7a4741dcae0fe8fb1" target="_blank">
-      🚀 단축어 1초만에 추가하기
+      🚀 모바일에서 바로 단축어 추가하기
     </a>
     <a class="btn-notion"
       href="https://likeable-hexagon-862.notion.site/396c2a04e6fb800c889aec25b13dc3ad?v=396c2a04e6fb80f6bb5c000cc6cdc3d0&pvs=143"
